@@ -2,7 +2,9 @@ using namespace std;
 #include "../include/pheno.h"
 #include "../include/globals.h"
 #include "../include/vars.h"
+#include <cstdlib>
 
+char ps2char(int c);
 
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -148,8 +150,11 @@ vector <float> calc_litterfall_rate(double gtime, float lat, vector <float> &can
 				int shed_tsteps = int((leafless_start_day - gtime)*24/delT) + 1;	// floor function
 				float shed_hrs = shed_tsteps*delT; 
 				
-				if (shed_hrs/hrsPerMonth > 6) cout << "FATAL: Error in phenology: " << shed_hrs/hrsPerMonth << " S months found" << endl;  
-
+				if (shed_hrs/hrsPerMonth > 6){
+					cout << "FATAL: Error in phenology: " << lat << " " << m_pheno << " " << ps2char(phenoStages[IX2(i,m_pheno,npft)]) << " " << zmonth << " " << m_real << " " << shed_hrs/hrsPerMonth << " S months found" << endl;  
+					exit(1);
+				}
+				
 				ls_rates[i] = canbio_now[i]/(shed_hrs/hrsPerMonth);	// per month
 
 				//if (ls_rates[i] > canbio_now[i]) ls_rates[i] = canbio_now[i]; // just to avoid -ve canbio
@@ -174,7 +179,6 @@ vector <float> calc_litterfall_rate(double gtime, float lat, vector <float> &can
 }
 
 
-char ps2char(int c);
 ///*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //	--> calc_pheno()
 
@@ -244,7 +248,7 @@ int calc_pheno(float gtime, float delT){
 		if (xlat < 0) m_pheno = (m+6)%12;
 		sp_fout << gt2string(gtime) << "\t"; 		
 
-		int pft_indices[] = {3,5};
+		int pft_indices[] = {2,4};
 		int nindices = 2;
 		for (int i=0; i<nindices; ++i){
 			int u=pft_indices[i]; //3;

@@ -29,7 +29,7 @@ int main(){
 	if (i != 0) {cout << "** ERROR ** : init failed!\n\n"; return 1;};
 
 	// pre-runs
-//	prerun_canbio_ic();
+	prerun_canbio_ic();
 //	sp_fout << "*************** LMOIS PR ********************\n";
 //	prerun_lmois_ic();
 

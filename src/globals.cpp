@@ -25,6 +25,7 @@ float mglon0, mglonf, mglat0, mglatf, mgdlon, mgdlat, mgdlev;
 int mgnlons, mgnlats, mgnlevs;
 vector <float> mglons, mglats, mglevs;
 vector <double> mgtimes;
+float glimits_infisim[4];
 
 int nsteps;	// number of steps for which sim will run
 int nsteps_spin; // number of spinup steps

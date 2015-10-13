@@ -16,6 +16,7 @@ static string params_ft_file = params_dir + "/" + "params_ft.r";
 static string params_ip_file = params_dir + "/" + "params_ip.r";
 static string sim_config_file = params_dir + "/" + "sim_config.r";
 
+char ps2char(int c);
 
 // Class ip_data
 ip_data::ip_data(string _n, string _u, string _fnp, int _sy, int _ny, 
@@ -195,6 +196,10 @@ int read_sim_config_file(){
 	mglats = createCoord(mglat0, mglatf, mgdlat, mgnlats);
 	mglevs.resize(1,1); mgnlevs = 1;
 
+	log_fout << "model lats: ";
+	for (int i=0; i<mgnlats; ++i) log_fout << mglats[i] << " ";
+	log_fout << endl;
+
 	// ... and time vector
 	nsteps = (gday_tf - gday_t0)*24/dt + 1;
 	nsteps_spin = (gday_t0 - spin_gday_t0)*24/dt;	// no +1 because this is 1 step less that t0
@@ -208,6 +213,11 @@ int read_sim_config_file(){
 	// get indices of cell containing SP-output point
 	i_xlon = indexC(mglons, xlon);
 	i_xlat = indexC(mglats, xlat);
+	
+	glimits_infisim[0] = mglon0;
+	glimits_infisim[1] = mglonf;
+	glimits_infisim[2] = mglat0;
+	glimits_infisim[3] = mglatf;
 
 }
 
@@ -331,6 +341,14 @@ int read_veg_params_file(){
 	log_fout << "\n";
 	log_fout << "------------------------\n";
 
+	log_fout << "----------- phenology ----------------\n";
+	for (int m=0; m<12; ++m){
+		for (int j=0;j<npft;++j) { 
+			log_fout << ps2char(phenoStages[IX2(j,m,npft)]) << "\t";
+		}
+		log_fout << "\n";
+	}
+
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -360,7 +378,7 @@ int init_modelvar(string var_name, string unit, int nl, gVar &v, vector <double>
 	if (v.lwrite){	
 		lfout << "~~~~~~~~ Will write variable " << var_name << " to nc file.\n";
 		v.ofname = "../output/"+var_name+"."+sim_date0+"-"+sim_datef+".nc";
-		v.ofile_handle->open(v.ofname, "w", glimits_india);
+		v.ofile_handle->open(v.ofname, "w", glimits_infisim);
 		v.ofile_handle->writeCoords(v);
 		v.ofile_handle->writeTimeValues(v);
 		v.outNcVar = v.ofile_handle->createVar(v);
@@ -441,7 +459,7 @@ int init_ip_var(string var_name, gVar &v, gVar &vout, ostream &lfout){
 		lfout << "Loading (" << var_name << ") input file for year " << ip_curr_yr << ", filenum = " << filenum << "...\n";	
 		lfout << "File = " << var_files[filenum] << '\n'; cout.flush();
 		v.ifname = var_files[filenum];
-		int i = v.ifile_handle->open(v.ifname, "r", glimits_india);
+		int i = v.ifile_handle->open(v.ifname, "r", glimits_infisim);
 		if (i != 0) cout << "NCFILE NOT VALID!!\n";
 
 		v.ifile_handle->readCoords(v, lfout);
@@ -471,7 +489,7 @@ int init_ip_var(string var_name, gVar &v, gVar &vout, ostream &lfout){
 	and interpolate them to model grid.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 int read_static_var(gVar &v, ostream &lfout){
-	int i = v.ifile_handle->open(v.ifname, "r", glimits_india);
+	int i = v.ifile_handle->open(v.ifname, "r", glimits_infisim);
 	if (i != 0) cout << "NCFILE NOT VALID!!\n";
 
 	v.ifile_handle->readCoords(v, lfout);
@@ -587,7 +605,7 @@ int init_infisim(){
 		sp_fout.open(pointOutFile.c_str());
 	
 		sp_fout << "lat:\t " << xlat << "\t lon:\t" << xlon << '\n';
-		sp_fout << "vegtype fractions:\n X\t AGR\t NLE\t BLE\t MD\t DD\t GR\t SC\n";
+		sp_fout << "vegtype fractions:\n X\t AGR\t BLE\t NLE\t BLD\t NLD\t GR\t SCD\t SCX\n";
 		for (int i=0; i<npft; ++i){
 			sp_fout << vegtype.getCellValue(xlon,xlat, i) << '\t'; 
 		}

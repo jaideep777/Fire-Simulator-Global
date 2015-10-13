@@ -37,6 +37,7 @@ extern float mglon0, mglonf, mglat0, mglatf, mgdlon, mgdlat, mgdlev;
 extern int mgnlons, mgnlats, mgnlevs;
 extern vector <float> mglons, mglats, mglevs;
 extern vector <double> mgtimes;
+extern float glimits_infisim[4];
 
 extern int nsteps;	// number of steps for which sim will run
 extern int nsteps_spin; // number of spinup steps

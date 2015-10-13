@@ -6,10 +6,10 @@
 # time is in GMT
 # spinup MUST BE ENABLED for now
 spinup		on			# (on/off) off implies IC will be supplied from file
-spin_date0	2000-4-1	# time assumed to be 0:0:0. Ideal start date is Apr 1
-sim_date0	2001-1-1
+spin_date0	2008-1-1	# time assumed to be 0:0:0. Ideal start date is Apr 1
+sim_date0	2009-1-1
 sim_t0		0:0:0		# GMT
-sim_datef	2006-12-31
+sim_datef	2013-12-31
 sim_tf		21:0:0
 dt			6			# hours
 base_date	2000-1-1	# base time assumed to be 0:0:0
@@ -22,9 +22,9 @@ lat0	-30.0
 latf	30.0
 dlat	0.5
 dlon	0.5
-# output params for single point (for testing/characterizing)
-xlon	75.5	# 76 31 50
-xlat	17.5	# 11 35 41
+# output params for single point (for testing/characterizing) 
+xlon	76.5	# 76 31 50
+xlat	11.5	# 11 35 41
 pointOutFile	../output/point_run.txt
 SPout_on	1	# 0/1
 

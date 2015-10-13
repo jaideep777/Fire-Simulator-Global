@@ -25,18 +25,18 @@ theta_sL 	0.8		# saturation water content of litter (m3/m3)
 # F = flush, M = mature, S = shedding, Z = leafless, E = both S & F.
 #	X	AGR	BLE	NLE	BLD	NLD	GR	SCD SCX	<-+ PFT, X = barren
 > PHENO
-Jan	X	X	E	E	S	S	Z	S	S
-Feb	X	X	E	E	S	S	Z	Z	S
-Mar	X	X	E	E	Z	Z	Z	Z	Z
-Apr	X	X	E	E	Z	Z	Z	Z	Z
-May	X	X	E	E	F	F	F	F	Z
-Jun	X	X	E	F	F	F	F	F	F
-Jul	X	X	E	F	M	M	F	F	F
-Aug	X	X	E	F	M	M	M	F	F
-Sep	X	X	E	S	M	M	S	M	F
-Oct	X	X	E	S	M	M	Z	M	M
-Nov	X	X	E	S	S	S	Z	S	S
-Dec	X	X	E	E	S	S	Z	S	S
+J	X	X	E	E	S	S	Z	S	S
+F	X	X	E	E	S	S	Z	Z	S
+M	X	X	E	E	Z	Z	Z	Z	Z
+A	X	X	E	E	Z	Z	Z	Z	Z
+M	X	X	E	E	F	F	F	F	Z
+J	X	X	E	F	F	F	F	F	F
+J	X	X	E	F	M	M	F	F	F
+A	X	X	E	F	M	M	M	F	F
+S	X	X	E	S	M	M	S	M	F
+O	X	X	E	S	M	M	Z	M	M
+N	X	X	E	S	S	S	Z	S	S
+D	X	X	E	E	S	S	Z	S	S
 
 #J	X	F	B	B	S	S	M	S
 #F	X	F	B	B	S	Z	S	Z
