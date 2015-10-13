@@ -87,18 +87,19 @@ int read_ip_params_file(){
 		ip_data_map.insert( pair <string, ip_data> (s,a) );
 		logdebug << s << ": "; ip_data_map.find(s)->second.print_vardata(log_fout);
 	}	
-		
+	
+	string parent_dir = data_dirs["forcing_data_dir"];	
 	fin >> s; 
 	if (s != "STATIC_INPUT_FILES") {cout << "static input files not found!"; return 1;}
 	while (fin >> s && s != attrbegin){
 		if (s == "") continue;	// skip empty lines
 		if (s == "#") {getline(fin,s,'\n'); continue;}	// skip #followed lines (comments)
 		fin >> u;
-		if (s == "msk") 			msk.ifname = "../input/" + u;
-		else if (s == "lmois") 		lmois.ifname = "../input/" + u;	
-		else if (s == "vegtype") 	vegtype.ifname = "../input/" + u;
-		else if (s == "albedo") 	albedo.ifname = "../input/" + u;
-		else if (s == "elev") 		elev.ifname = "../input/" + u;
+		if (s == "msk") 			msk.ifname = parent_dir + "/" + u;
+		else if (s == "lmois") 		lmois.ifname = parent_dir + "/" + u;	
+		else if (s == "vegtype") 	vegtype.ifname = parent_dir + "/" + u;
+		else if (s == "albedo") 	albedo.ifname = parent_dir + "/" + u;
+		else if (s == "elev") 		elev.ifname = parent_dir + "/" + u;
 	}
 	
 	fin.close();
@@ -247,8 +248,9 @@ int read_veg_params_file(){
 	aL.resize(npft); aS.resize(npft); aR.resize(npft);		// allocation fractions during current phenology state
 	LAImax.resize(npft); LAImin.resize(npft);				// min and max LAI for each pft
 	phenoStages.resize(npft*12);	// phenology stages
-	rFixC.resize(npft*12);			// monthly carbon fixation rates
-	aFixC.resize(npft*12);			// monthly carbon fixation fractions 
+	rFixC_N.resize(npft*12);			// monthly carbon fixation rates
+	rFixC_S.resize(npft*12);			// monthly carbon fixation rates
+//	aFixC.resize(npft*12);			// monthly carbon fixation fractions 
 	leafLs.resize(npft); Tdecomp.resize(npft);
 	z1Month.resize(npft, -1);		// 1st leafless month, -1 if not found.
 	Wc_sat_vec.resize(npft, 0);
@@ -283,28 +285,47 @@ int read_veg_params_file(){
 	
 	while (fin >> s && s != attrbegin);	// loop till next >
 	fin >> s; 
-	if (s != "CARBON_FIXATION_RATE") {cout << "C Fixation rates not found!"; return 1;}
+	if (s != "CARBON_FIXATION_RATE_NORTH") {cout << "North C Fixation rates not found!"; return 1;}
 	for (int m=0; m<12; ++m){
 		fin >> c;	// ignore the first char which is for month
 		for (int i=0; i<npft; ++i){
-			fin >> rFixC[IX2(i,m, npft)]; 
+			fin >> rFixC_N[IX2(i,m, npft)]; 
 		}
 	}
 
-	// create aFixC vector (same as rFixC but negative values set to Zero)
+	while (fin >> s && s != attrbegin);	// loop till next >
+	fin >> s; 
+	if (s != "CARBON_FIXATION_RATE_SOUTH") {cout << "South C Fixation rates not found!"; return 1;}
 	for (int m=0; m<12; ++m){
-		for (int i=0; i< npft; ++i) {
-			aFixC[IX2(i,m, npft)] = (rFixC[IX2(i,m, npft)] > 0)? rFixC[IX2(i,m, npft)] : 0;  
+		fin >> c;	// ignore the first char which is for month
+		for (int i=0; i<npft; ++i){
+			fin >> rFixC_S[IX2(i,m, npft)]; 
 		}
 	}
+
+
+//	// create aFixC vector (same as rFixC but negative values set to Zero)
+//	for (int m=0; m<12; ++m){
+//		for (int i=0; i< npft; ++i) {
+//			aFixC[IX2(i,m, npft)] = (rFixC[IX2(i,m, npft)] > 0)? rFixC[IX2(i,m, npft)] : 0;  
+//		}
+//	}
 	
 	// check if everything is correct
-	log_fout << "--------- C fixation rates ---------------\n";
+	log_fout << "--------- C fixation rates (North)---------------\n";
 	for (int i=0; i<12; ++i){
-		for (int j=0;j<npft;++j) { log_fout << rFixC[npft*i+j] << "\t";}
+		for (int j=0;j<npft;++j) { log_fout << rFixC_N[npft*i+j] << "\t";}
 		log_fout << "\n";
 	}
 	log_fout << "\n";
+
+	log_fout << "--------- C fixation rates (South)---------------\n";
+	for (int i=0; i<12; ++i){
+		for (int j=0;j<npft;++j) { log_fout << rFixC_S[npft*i+j] << "\t";}
+		log_fout << "\n";
+	}
+	log_fout << "\n";
+
 	log_fout << "--------- 1st leafless month ---------------\n";
 	for (int j=0;j<npft;++j) { log_fout << z1Month[j] << "\t";}
 	log_fout << "\n";

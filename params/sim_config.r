@@ -16,10 +16,10 @@ base_date	2000-1-1	# base time assumed to be 0:0:0
 # spinup end date is automatically taken as 1 time step lesser than sim_date0_t0
 
 > MODEL_GRID
-lon0	66.5
-lonf	100.5
-lat0	6.5
-latf	38.5
+lon0	0.0
+lonf	360.0
+lat0	-30.0
+latf	30.0
 dlat	0.5
 dlon	0.5
 # output params for single point (for testing/characterizing)
@@ -30,7 +30,7 @@ SPout_on	1	# 0/1
 
 > OUTPUT_VARIABLES
 # var		nc	sp  <- write flags to nc file and to single point output
-pr			1	0
+pr			0	0
 rh			0	0
 ts			0	0
 wsp			0	0

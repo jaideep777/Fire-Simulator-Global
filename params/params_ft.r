@@ -1,18 +1,18 @@
 # forest type parameters
 
-> nPFT 8
+> nPFT 9
 
-#	X		AGR		NLE		BLE		MD		DD		GR		SC		<-+ PFT
-#	0		1		2		3		4		5		6		7		v Attr
-fP	0		1		1		1		1		1		1		1		# fP = packing fraction
-aL	0.00	0.45	0.25	0.25	0.30	0.30	0.45	0.30	# allocation to leaves
-aS	0.00	0.00	0.50	0.50	0.45	0.45	0.00	0.45	# allocation to stem
-LL	1		1		2		2		1		1		1		1		# leaf-lifespan
-T	3		3		3		3		3		3		5		3		# halflife of dry litter decomposition (months)
-LM	0		4		5		7		5		5		0		4		# LAI max	(REF: pft_2002, Bonan) set to 0 for grass because grass biomass is itself fuel
-Lm	0		0		.1		.1		.1		0		0		0		# LAI min	(REF: pft_2002, Bonan)
-ZM	-1		-1		-1		-1		-1		2		2		2		# Month until which all leaves are shed / 1st leafless month (-1 if no leafless month)
-Wcs	0		0		0.5		0.5		0.5		0.5		0.5		0.5		# canopy water holding capacity per leaf layer (kg/m2) (REF: Ogee_2002)
+#	X		AGR		BLE		NLE		BLD		NLD		GR		SCD		SCX		<-+ PFT
+#	0		1		2		3		4		5		6		7		8		v Attr
+fP	0		1		1		1		1		1		1		1		1		# fP = packing fraction
+aL	0.00	0.45	0.25	0.25	0.30	0.30	0.45	0.30	0.30	# allocation to leaves
+aS	0.00	0.00	0.50	0.50	0.45	0.45	0.00	0.45	0.45	# allocation to stem
+LL	1		1		2		2		1		1		1		1		1		# leaf-lifespan
+T	3		3		3		3		3		3		5		3		3		# halflife of dry litter decomposition (months)
+LM	0		4		5		7		5		5		0		4		1		# LAI max	(REF: pft_2002, Bonan) set to 0 for grass because grass biomass is itself fuel
+Lm	0		0		.1		.1		.1		0		0		0		0		# LAI min	(REF: pft_2002, Bonan)
+ZM	-1		-1		-1		-1		3		3		10		2		3		# Month until which all leaves are shed / 1st leafless month (-1 if no leafless month)
+Wcs	0		0		0.5		0.5		0.5		0.5		0.5		0.5		0.5		# canopy water holding capacity per leaf layer (kg/m2) (REF: Ogee_2002)
 # sources for litter decomposition T1/2:
 # sundarpandian 1999, pandey 2007, nelson 1999
 
@@ -22,21 +22,21 @@ theta_sL 	0.8		# saturation water content of litter (m3/m3)
 
 # modified pheno
 # REFS: Bhat 1992,	Bhadra 2011, folder = seasonalphenology	
-# F = flush, M = mature, S = shedding, Z = leafless, E = both S & F. For GR, S = drying
-#	X	AGR	NLE	BLE	MD	DD	GR	SC	<-+ PFT, X = barren
+# F = flush, M = mature, S = shedding, Z = leafless, E = both S & F.
+#	X	AGR	BLE	NLE	BLD	NLD	GR	SCD SCX	<-+ PFT, X = barren
 > PHENO
-J	X	E	E	E	S	S	S	S
-F	X	E	E	E	F	Z	Z	Z
-M	X	E	E	E	F	Z	Z	Z
-A	X	E	E	E	F	Z	Z	F
-M	X	E	E	E	E	F	Z	F
-J	X	E	E	M	E	F	F	F
-J	X	E	E	M	E	F	F	F
-A	X	E	E	M	E	F	F	F
-S	X	E	E	E	E	F	M	M
-O	X	E	E	E	E	M	M	S
-N	X	E	E	E	S	S	M	S
-D	X	E	E	E	S	S	M	S
+Jan	X	X	E	E	S	S	Z	S	S
+Feb	X	X	E	E	S	S	Z	Z	S
+Mar	X	X	E	E	Z	Z	Z	Z	Z
+Apr	X	X	E	E	Z	Z	Z	Z	Z
+May	X	X	E	E	F	F	F	F	Z
+Jun	X	X	E	F	F	F	F	F	F
+Jul	X	X	E	F	M	M	F	F	F
+Aug	X	X	E	F	M	M	M	F	F
+Sep	X	X	E	S	M	M	S	M	F
+Oct	X	X	E	S	M	M	Z	M	M
+Nov	X	X	E	S	S	S	Z	S	S
+Dec	X	X	E	E	S	S	Z	S	S
 
 #J	X	F	B	B	S	S	M	S
 #F	X	F	B	B	S	Z	S	Z
@@ -57,7 +57,7 @@ D	X	E	E	E	S	S	M	S
 # There cant be comments at end of row
 # rows are months from Jan to Dec
 #	Phenology stage
-#	------------------
+#	------------------------------------
 #	F = leaf flushing 		= 0
 #	M = mature leaf			= 1
 #	L = leaf-fall 			= 2
@@ -65,7 +65,7 @@ D	X	E	E	E	S	S	M	S
 #	D = drying out 			= 4
 #	X = invalid 			= -1
 # 	(REF: pheno_2005, Singh, Kushwaha)
-#	-------------------
+#	------------------------------------
 #	X	AGR	NLE	BLE	MD	DD	GR	SCE	SCD	...PFTs
 #	 original pheno from singh et al.
 #	0	1	2	3	4	5	6	7	8	
@@ -82,42 +82,39 @@ D	X	E	E	E	S	S	M	S
 #	X	F	M	M	M	M	M	M	N	26
 #	X	D	M	M	M	L	M	L	D	10
 
-# Characteristic Carbon fixation rates, which is just a scale free representation for ... 
-# ... monthly npp for 8 pfts (found by regression). Rows are months starting Jan
-# generated from NPP data 1982-1991 averaged over the years for each month ...
-# ... and then running a regression with 0 intercept over all spatial points
-# +ve values -> Biomass is fixed from atmospheric CO2, 
-# -ve values -> stem biomass is consumed in respiration, initial leafout 
-# 				(depending on pheno stage)
-#	 X		AGR		NLE		BLE		MD		DD		GR		SC	...PFTs
-> CARBON_FIXATION_RATE
-J	2.25	17.19	    0	96.59	52.67	25.12	3.70	10.33
-F	2.56	16.85	    0	85.53	47.65	14.09	1.62	 4.68
-M	3.29	14.74	20.52	98.82	52.04	    0	1.08	    0
-A	2.14	9.16	58.13	115.56	47.54	    0	4.70	    0
-M	0.16	7.61	87.37	147.88	54.00	    0	13.23	    0
-J	   0	11.22	95.76	116.98	55.47	    0	12.91	 7.15
-J	   0	20.82	98.67	99.95	69.14	30.42	14.63	21.33
-A	   0	27.06	100.17	95.41	70.28	40.02	11.23	22.78
-S	   0	29.61	75.67	114.42	79.54	50.73	9.45	17.75
-O	0.91	29.21	39.13	128.21	98.33	49.94	8.27	10.41
-N	1.52	21.21	6.00	120.56	82.59	32.73	11.32	 9.64
-D	1.59	17.24	   0	106.16	62.40	31.31	8.72	14.86
+# Characteristic Carbon fixation rates
+# tropics (-30, 30) deg lat, averaged over years: 2001, 2004, 2008, 2011, 2013 
+#	 X		AGR		BLE		NLE		BLD		NLD		 GR		SCD		SCX	 ...PFTs
+> CARBON_FIXATION_RATE_NORTH
+J	1.47	20.56	85.31	 0.00	28.62	0.00	 5.24	12.21	3.27
+F	1.71	21.37	77.38	 9.89	16.40	0.00	 2.20	 4.73	2.39
+M	2.09	18.65	88.15	30.10	22.97	0.00	 2.22	 6.66	2.73
+A	1.90	16.41	86.78	42.61	34.60	0.00	 2.79	 9.35	3.73
+M	1.72	17.56	85.84	65.65	51.83	0.00	 2.73	15.78	4.18
+J	1.68	22.89	78.04	79.58	55.77	0.00	 3.77	27.48	1.31
+J	1.87	32.38	82.26	95.15	53.68	0.00	10.58	42.49	1.07
+A	1.80	39.83	85.73	95.37	48.74	0.00	18.81	47.93	3.24
+S	1.63	39.93	87.13	70.81	57.25	0.00	15.89	58.81	3.56
+O	1.54	36.95	90.90	43.18	73.03	0.00	 5.30	53.28	5.56
+N	1.25	25.27	85.79	13.00	67.21	0.00	 3.44	27.62	6.78
+D	1.25	21.62	82.26	 0.00	46.23	0.00	 4.76	16.80	6.38
 
-# Original: Above is +ve numbers only
-#J	2.25	17.19	-6.46	96.59	52.67	25.12	3.70	10.33
-#F	2.56	16.85	-3.71	85.53	47.65	14.09	1.62	4.68
-#M	3.29	14.74	20.52	98.82	52.04	-4.71	1.08	-8.90
-#A	2.14	9.16	58.13	115.56	47.54	-12.08	4.70	-12.73
-#M	0.16	7.61	87.37	147.88	54.00	-16.84	13.23	-8.90
-#J	-1.08	11.22	95.76	116.98	55.47	-2.70	12.91	7.15
-#J	-2.38	20.82	98.67	99.95	69.14	30.42	14.63	21.33
-#A	-2.58	27.06	100.17	95.41	70.28	40.02	11.23	22.78
-#S	-2.13	29.61	75.67	114.42	79.54	50.73	9.45	17.75
-#O	0.91	29.21	39.13	128.21	98.33	49.94	8.27	10.41
-#N	1.52	21.21	6.00	120.56	82.59	32.73	11.32	9.64
-#D	1.59	17.24	-5.85	106.16	62.40	31.31	8.72	14.86
+> CARBON_FIXATION_RATE_SOUTH
+J	19.96	71.13	 85.13	 79.71	73.70	0.00	23.58	48.59	2.22
+F	17.92	66.78	 75.17	 47.67	70.76	0.00	25.82	51.57	3.96
+M	21.81	65.12	 88.75	102.85	84.19	0.00	24.07	60.28	6.13
+A	19.46	61.36	 86.37	 95.62	72.28	0.00	20.32	56.76	4.88
+M	17.03	53.58	 87.67	106.57	51.50	0.00	12.91	50.38	4.86
+J	14.40	42.94	 85.82	 50.93	34.37	0.00	 6.39	39.21	3.63
+J	15.54	41.47	 91.56	100.66	23.88	0.00	 6.64	32.69	4.14
+A	17.79	41.53	 91.62	148.91	15.06	0.00	 9.39	22.96	5.36
+S	19.23	41.21	 93.90	138.78	15.21	0.00	16.09	10.93	2.96
+O	19.46	54.24	100.12	131.79	35.83	0.00	23.48	10.94	0.85
+N	17.69	61.71	 91.56	104.65	57.19	0.00	26.03	18.74	0.22
+D	18.96	62.58	 88.64	 75.63	67.72	0.00	22.16	35.43	0.87
 
+
+# Negative numbers have been set to zero in above tables. For original data, see excel sheet.
 
 > END
 

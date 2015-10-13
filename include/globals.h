@@ -60,8 +60,9 @@ extern vector <float> aL, aS, aR;		// allocation fractions during current phenol
 extern vector <float> LAImax, LAImin;	// min and max LAI for each pft
 
 extern vector <int> phenoStages;		// phenology stages
-extern vector <float> rFixC;			// monthly carbon fixation rates
-extern vector <float> aFixC;			// NPP fixation fractions for each PFT. N_fixed(i,m) = aFixC(i,m) * N_tot_obs <- WRONG!
+extern vector <float> rFixC_N;			// monthly carbon fixation rates for northern hemisphere
+extern vector <float> rFixC_S;			// monthly carbon fixation rates for southern hemisphere
+//extern vector <float> aFixC;			// NPP fixation fractions for each PFT. N_fixed(i,m) = aFixC(i,m) * N_tot_obs <- WRONG!
 extern vector <float> leafLs;			// leaf life span
 extern vector <float> Tdecomp;			// fraction of mass decomposed in 1 yr
 extern vector <int> z1Month;		// 1st month in which given PFT is leafless	(all leaves to be shed till then)

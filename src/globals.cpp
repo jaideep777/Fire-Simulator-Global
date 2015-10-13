@@ -53,8 +53,9 @@ vector <float> aL, aS, aR;		// allocation fractions during current phenology sta
 vector <float> LAImax, LAImin;	// min and max LAI for each pft
 
 vector <int> phenoStages;		// phenology stages
-vector <float> rFixC;			// monthly carbon fixation rates
-vector <float> aFixC;			// monthly carbon fixation fractions (add to 1 over all PFTs)
+vector <float> rFixC_N;			// monthly carbon fixation rates for northern hemisphere
+vector <float> rFixC_S;			// monthly carbon fixation rates for southern hemisphere
+//vector <float> aFixC;			// monthly carbon fixation fractions (add to 1 over all PFTs)
 vector <float> leafLs;				// fraction of mass that decomposes in 1 yr
 vector <float> Tdecomp;			// decomposition halflife in months
 vector <int> z1Month;		// 1st month in which given PFT is leafless	(all leaves to be shed till then)

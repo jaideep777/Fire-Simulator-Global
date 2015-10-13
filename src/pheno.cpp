@@ -25,14 +25,17 @@ using namespace std;
 	Input: month, observed NPP
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 //ofstream fout_allocdebug("../output/alloc_debug.txt");
-vector <float> calc_alloc_pft(int m, float npp_obs, vector <float> &pft_fracs){
+vector <float> calc_alloc_pft(int m_real, float lat, float npp_obs, vector <float> &pft_fracs){
 	vector <float> allocs(npft,0);
-	m = m-1;	// convert month from 1-12 to 0-11 for indexing
+
+	int m = m_real-1;	// convert month from 1-12 to 0-11 for indexing
 	
 	float npp_exp = 0;
 	for (int ipft=0; ipft<npft; ++ipft){
 		float f = pft_fracs[ipft];
-		float Ni = f*rFixC[IX2(ipft,m, npft)];
+		float Ni;
+		if (lat >= 0) Ni = f*rFixC_N[IX2(ipft,m, npft)];
+		else    	  Ni = f*rFixC_S[IX2(ipft,m, npft)];
 		allocs[ipft] = Ni;
 		npp_exp += Ni;	// expected NPP from regression relation
 	}
@@ -59,7 +62,7 @@ vector <float> calc_alloc_pft(int m, float npp_obs, vector <float> &pft_fracs){
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	--> set_leaf_alloc()
 	
-	Allocate NPP to leaves, stem and roots.
+	Calculate NPP allocation fractions to leaves, stem and roots.
 	
 	npp allocation fractions depend on phenology stage as well as pft.
 	this function sets the vectors aL and aS (for all PFTs) given the month.
@@ -70,10 +73,11 @@ vector <float> calc_alloc_pft(int m, float npp_obs, vector <float> &pft_fracs){
 	M, S, Z -> stem and roots only
 	E -> normal growth
 	
-	input: month (1-12), NPP for each PFT
+	input: month (1-12), lat (for hemisphere)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-int set_leaf_alloc(int m){
+int set_leaf_alloc(int m, float lat){
 	m = m-1;	// convert month range from (1-12) to (0-11) 
+	if (lat < 0) m = (m+6)%12;
 
 	// get alloc fractions for current month
 	for (int i=0; i< npft; ++i){
@@ -121,23 +125,30 @@ int set_leaf_alloc(int m){
 	2. for deciduous trees (those with leafless period) it is linear so 
 	   as to exhaust all leaves till leafless month   	
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-vector <float> calc_litterfall_rate(double gtime, vector <float> &canbio_now, float delT){
+vector <float> calc_litterfall_rate(double gtime, float lat, vector <float> &canbio_now, float delT){
 
 	vector <float> ls_rates(npft,0);	
 
-	int m = gt2month(gtime)-1; // get current month and convert month (1-12) to index (0-11) 
+	int m_real = gt2month(gtime)-1; // get current month and convert month (1-12) to index (0-11) 
+
+	int m_pheno = m_real;
+	if (lat < 0) m_pheno = (m_real+6)%12;
+
 	for (int i=0; i<npft; ++i){
 		// shedding stage
-		if (phenoStages[IX2(i,m,npft)] == psS){ 
+		if (phenoStages[IX2(i,m_pheno,npft)] == psS){ 
 			if (z1Month[i] >= 0){	// leafless month specified, i.e. deciduous tree
 				// shed leaves so as to shed all till 1st leafless day
 				int zmonth = z1Month[i];
+				if (lat < 0) zmonth = (zmonth+6)%12;
 				int yrnow = gt2year(gtime);
-				if (zmonth <= m+1) ++yrnow;
+				if (zmonth <= m_real+1) ++yrnow;
 				float leafless_start_day = ymd2gday(yrnow, zmonth, 1);
 				
 				int shed_tsteps = int((leafless_start_day - gtime)*24/delT) + 1;	// floor function
 				float shed_hrs = shed_tsteps*delT; 
+				
+				if (shed_hrs/hrsPerMonth > 6) cout << "FATAL: Error in phenology: " << shed_hrs/hrsPerMonth << " S months found" << endl;  
 
 				ls_rates[i] = canbio_now[i]/(shed_hrs/hrsPerMonth);	// per month
 
@@ -149,7 +160,7 @@ vector <float> calc_litterfall_rate(double gtime, vector <float> &canbio_now, fl
 			}
 		}
 		// evergreen tree in E phase
-		else if (phenoStages[IX2(i,m,npft)] == psE ){
+		else if (phenoStages[IX2(i,m_pheno,npft)] == psE ){
 			// shed leaves at 1st order rate
 			ls_rates[i] = 1/(leafLs[i]*12)*canbio_now[i];	// per month. 
 		}
@@ -175,24 +186,24 @@ int calc_pheno(float gtime, float delT){
 
 	int curr_month = gt2month(gtime); 	// month from 1-12 
 	
-	// calculate allocation fractions to leaves (aL) and stem (aS) 
-	set_leaf_alloc(curr_month);
-	
-
 	for (int ilat=0; ilat<mgnlats; ++ilat){
 		for (int ilon=0; ilon<mgnlons; ++ilon){
 
+			float lat = mglats[ilat];
 			float N_obs = npp(ilon, ilat, 0); 
 			//N_obs *= hrsPerMonth;		// convert from gm/m2/hr to gm/m2/month 
 			vector <float> pft_fracs(npft,0);
 			for (int i=0; i<npft; ++i) pft_fracs[i] = vegtype(ilon, ilat, i); 
 
+			// calculate allocation fractions to leaves (aL) and stem (aS) 
+			set_leaf_alloc(curr_month, lat);
+	
 			// calculate fraction of total NPP going to each PFT (units same as N_obs) 
-			vector <float> allocs_pft = calc_alloc_pft(curr_month, N_obs, pft_fracs);
+			vector <float> allocs_pft = calc_alloc_pft(curr_month, lat, N_obs, pft_fracs);
 
 			vector <float> canbiof(npft, 0);
 			//vector <float> stembiof(npft, 0);
-	
+
 			for (int i=0; i<npft; ++i){
 				canbiof[i] = 2*allocs_pft[i]*aL[i] *delT;		// gC/m2/hr* hrs * 2 gm/gC
 				//stembiof[i] = allocs_pft[i]*aS[i] *delT;
@@ -204,7 +215,7 @@ int calc_pheno(float gtime, float delT){
 			// calculate litter-fall rates (gm/month)
 			vector <float> canbio_c(npft,0);
 			for (int i=0; i<npft; ++i) canbio_c[i] = canbio(ilon, ilat, i); 
-			vector <float> ls_rates = calc_litterfall_rate(gtime, canbio_c, delT);
+			vector <float> ls_rates = calc_litterfall_rate(gtime, lat, canbio_c, delT);
 	
 			// accumulate litter, shed canopy
 			for (int i=0; i<npft; ++i){
@@ -229,15 +240,21 @@ int calc_pheno(float gtime, float delT){
 	// output
 	if (spout_on){
 		int m = curr_month-1;
+		int m_pheno = m;
+		if (xlat < 0) m_pheno = (m+6)%12;
 		sp_fout << gt2string(gtime) << "\t"; 		
-		int u=3;
-		sp_fout << ps2char(phenoStages[IX2(u,m, npft)]) << "\t"
-				<< canbio.getCellValue(xlon,xlat,u) << "\t" << dxl.getCellValue(xlon,xlat,0) << "\t";
-		u=5;
-		sp_fout << ps2char(phenoStages[IX2(u,m, npft)]) << "\t"
-				<< canbio.getCellValue(xlon,xlat,u) << "\t" << dxl.getCellValue(xlon,xlat,0) << "\t";
-		//if (canbio_prerun_on) sp_fout << "\n";
-		
+
+		int pft_indices[] = {3,5};
+		int nindices = 2;
+		for (int i=0; i<nindices; ++i){
+			int u=pft_indices[i]; //3;
+			sp_fout << ps2char(phenoStages[IX2(u,m_pheno, npft)]) << "\t"
+					<< canbio.getCellValue(xlon,xlat,u) << "\t" << dxl.getCellValue(xlon,xlat,0) << "\t";
+//			u=5;
+//			sp_fout << ps2char(phenoStages[IX2(u,m_pheno, npft)]) << "\t"
+//					<< canbio.getCellValue(xlon,xlat,u) << "\t" << dxl.getCellValue(xlon,xlat,0) << "\t";
+			//if (canbio_prerun_on) sp_fout << "\n";
+		}		
 	}
 
 }

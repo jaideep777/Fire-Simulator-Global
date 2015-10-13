@@ -29,17 +29,17 @@ int main(){
 	if (i != 0) {cout << "** ERROR ** : init failed!\n\n"; return 1;};
 
 	// pre-runs
-	prerun_canbio_ic();
-	sp_fout << "*************** LMOIS PR ********************\n";
-	prerun_lmois_ic();
+//	prerun_canbio_ic();
+//	sp_fout << "*************** LMOIS PR ********************\n";
+//	prerun_lmois_ic();
 
-	// main run
-	sp_fout << "************** MAIN *********************\n";
-	main_run();
-	
-	// destructor will close all the NC files :) ...phew!
-	cout << "> Check details in log file /output/log.txt\n";
-	cout << "> Successfully wrote NC files.\n\n\n";
+//	// main run
+//	sp_fout << "************** MAIN *********************\n";
+//	main_run();
+//	
+//	// destructor will close all the NC files :) ...phew!
+//	cout << "> Check details in log file /output/log.txt\n";
+//	cout << "> Successfully wrote NC files.\n\n\n";
 
 }
 
