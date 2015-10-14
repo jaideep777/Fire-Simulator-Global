@@ -11,8 +11,15 @@ using namespace std;
 
 
 int calc_ndr(double gt){ 
-
+	static int m_prev = -1;
 	int m = gt2month(gt);
+	
+	if (m != m_prev){
+		cout << "Reading new albedo from " << albedo.ifname << ": " << gt2string(gt) << " " << m_prev << " " << m << endl;
+		albedo.ifile_handle->readVar(albedo,m-1);
+		albedo = lterp(albedo, mglons, mglats);
+		m_prev = m;
+	}
 
 	float N = gt2daynum(gt);
 	float hr = (gt - int(gt))*24;

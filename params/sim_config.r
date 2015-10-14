@@ -23,8 +23,14 @@ latf	30.0
 dlat	0.5
 dlon	0.5
 # output params for single point (for testing/characterizing) 
-xlon	76.5	# 76 31 50
-xlat	11.5	# 11 35 41
+# Some points:
+# 300.5 -19.5  - 90% BLD forest in Brazil
+# 62.0 -27.5  - 50% GR in Brazil
+# 76.5 11.5   - Mudumalai (50% BLE + 25% BLD)
+# 21.5 -18.5  - 90% SCD in Africa
+# 31.0 9.5    - 80% SCD below Sahara
+xlon	300.5	# 76 31 50
+xlat	-19.5	# 11 35 41
 pointOutFile	../output/point_run.txt
 SPout_on	1	# 0/1
 

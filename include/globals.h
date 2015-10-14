@@ -55,6 +55,7 @@ extern bool canbio_prerun_on;
 
 // veg params
 extern int npft;
+extern vector <string> pftNames;
 
 extern vector <float> aLf, aSf, aRf;	// allocation fractions during normal growth
 extern vector <float> aL, aS, aR;		// allocation fractions during current phenology state

@@ -1,6 +1,7 @@
 # forest type parameters
 
 > nPFT 9
+X AGR BLE NLE BLD NLD GR SCD SCX
 
 #	X		AGR		BLE		NLE		BLD		NLD		GR		SCD		SCX		<-+ PFT
 #	0		1		2		3		4		5		6		7		8		v Attr
@@ -25,32 +26,18 @@ theta_sL 	0.8		# saturation water content of litter (m3/m3)
 # F = flush, M = mature, S = shedding, Z = leafless, E = both S & F.
 #	X	AGR	BLE	NLE	BLD	NLD	GR	SCD SCX	<-+ PFT, X = barren
 > PHENO
-J	X	X	E	E	S	S	Z	S	S
-F	X	X	E	E	S	S	Z	Z	S
-M	X	X	E	E	Z	Z	Z	Z	Z
-A	X	X	E	E	Z	Z	Z	Z	Z
-M	X	X	E	E	F	F	F	F	Z
-J	X	X	E	F	F	F	F	F	F
-J	X	X	E	F	M	M	F	F	F
-A	X	X	E	F	M	M	M	F	F
-S	X	X	E	S	M	M	S	M	F
+J	X	X	E	S	S	S	Z	S	S
+F	X	X	E	F	Z 	S	Z	Z	S
+M	X	X	E	F	Z	Z	Z	Z	Z
+A	X	X	E	F	F	Z	Z	Z	Z
+M	X	X	E	F	F	F	F	F	Z
+J	X	X	E	E	F	F	F	F	Z
+J	X	X	E	E	M	M	F	F	F
+A	X	X	E	E	M	M	M	F	F
+S	X	X	E	E	M	M	S	M	F
 O	X	X	E	S	M	M	Z	M	M
-N	X	X	E	S	S	S	Z	S	S
-D	X	X	E	E	S	S	Z	S	S
-
-#J	X	F	B	B	S	S	M	S
-#F	X	F	B	B	S	Z	S	Z
-#M	X	F	B	B	S	Z	Z	Z
-#A	X	F	B	B	Z	Z	Z	Z
-#M	X	F	B	B	F	F	Z	F
-#J	X	F	B	B	F	F	F	F
-#J	X	F	B	B	F	F	F	F
-#A	X	F	B	B	F	F	F	F
-#S	X	F	B	B	F	F	M	F
-#O	X	F	B	B	M	M	M	M
-#N	X	F	B	B	M	M	M	M
-#D	X	F	B	B	M	S	M	S
-
+N	X	X	E	S	S	S	Z	S	M
+D	X	X	E	S	S	S	Z	S	S
 
 
 # above matrix must be in this same order. see example below.

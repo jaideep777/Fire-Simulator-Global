@@ -248,17 +248,19 @@ int calc_pheno(float gtime, float delT){
 		if (xlat < 0) m_pheno = (m+6)%12;
 		sp_fout << gt2string(gtime) << "\t"; 		
 
-		int pft_indices[] = {2,4};
-		int nindices = 2;
+		int pft_indices[] = {0,1,2,3,4,5,6,7,8};
+		int nindices = 9;
 		for (int i=0; i<nindices; ++i){
 			int u=pft_indices[i]; //3;
 			sp_fout << ps2char(phenoStages[IX2(u,m_pheno, npft)]) << "\t"
-					<< canbio.getCellValue(xlon,xlat,u) << "\t" << dxl.getCellValue(xlon,xlat,0) << "\t";
+					<< canbio.getCellValue(xlon,xlat,u) << "\t";
 //			u=5;
 //			sp_fout << ps2char(phenoStages[IX2(u,m_pheno, npft)]) << "\t"
 //					<< canbio.getCellValue(xlon,xlat,u) << "\t" << dxl.getCellValue(xlon,xlat,0) << "\t";
 			//if (canbio_prerun_on) sp_fout << "\n";
-		}		
+		}
+		sp_fout << dxl.getCellValue(xlon,xlat,0) << "\t";
+		sp_fout << curr_month << "\t" << m << "\t" << m_pheno << "\t";
 	}
 
 }

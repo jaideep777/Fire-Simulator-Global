@@ -48,6 +48,7 @@ bool canbio_prerun_on = true;
 // size of the vectors is = npft
 
 int npft = -1;
+vector <string> pftNames;
 
 vector <float> aLf, aSf, aRf;	// allocation fractions during flushing
 vector <float> aL, aS, aR;		// allocation fractions during current phenology state

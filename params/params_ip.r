@@ -32,13 +32,14 @@ npp		gC/m2/s		npp			2000		14			avg			hold	# set to zero to avoid loss of good da
 
 > STATIC_INPUT_FILES
 # var	|	file (all these files should be in the input folder)
-msk			util_data/masks/surta_global_0.5.nc # surta_india_0.2.nc
-vegtype		forest_type/MODIS/ftmap_MOD12q1_0.5_9pft.nc # ftmap_iirs_8pft.nc
-albedo		albedo/albedo_monthly_cycle_1998.2011.nc # albedo.avg.2004.nc
+msk			util_data/masks/surta_global_0.5_sl.nc # surta_india_0.2.nc
+vegtype		forest_type/MODIS/ftmap_MOD12q1_0.5_9pft_sl.nc # ftmap_iirs_8pft.nc
+albedo		albedo/albedo_monthly_cycle_1998.2011_sl.nc # albedo.avg.2004.nc
 elev		util_data/elevation/elev.0.5-deg.nc # elev.0.5-deg.nc
 
 lmois		lmois_spin_end.2000-12-31.nc 
 
 > END
+
 
 

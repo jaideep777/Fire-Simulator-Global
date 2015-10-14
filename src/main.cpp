@@ -30,8 +30,8 @@ int main(){
 
 	// pre-runs
 	prerun_canbio_ic();
-//	sp_fout << "*************** LMOIS PR ********************\n";
-//	prerun_lmois_ic();
+	sp_fout << "*************** LMOIS PR ********************\n";
+	prerun_lmois_ic();
 
 //	// main run
 //	sp_fout << "************** MAIN *********************\n";

@@ -1,6 +1,7 @@
 #include "../include/init.h"
 #include "../include/globals.h"
 #include "../include/vars.h"
+#include "../include/io.h"
 using namespace std;
 
 // global variables for use in this file only
@@ -103,6 +104,9 @@ int read_ip_params_file(){
 		else if (s == "elev") 		elev.ifname = parent_dir + "/" + u;
 	}
 	
+//	cout << "albedo file: " << albedo.ifname << endl;
+//	cout << "vegtype file: " << vegtype.ifname << endl;
+
 	fin.close();
 }
 
@@ -252,6 +256,9 @@ int read_veg_params_file(){
 	fin >> s; 
 	if (s != "nPFT") {cout << "number of PFTs not found!"; return 1;}
 	fin >> npft;	// read number of pfts into global variable
+	for (int i=0; i<npft; ++i){
+		fin >> s; pftNames.push_back(s);
+	}
 	
 	// resize all veg related vectors to npft values
 	aLf.resize(npft); aSf.resize(npft); aRf.resize(npft);	// allocation fractions during flushing
@@ -605,18 +612,32 @@ int init_infisim(){
 		sp_fout.open(pointOutFile.c_str());
 	
 		sp_fout << "lat:\t " << xlat << "\t lon:\t" << xlon << '\n';
-		sp_fout << "vegtype fractions:\n X\t AGR\t BLE\t NLE\t BLD\t NLD\t GR\t SCD\t SCX\n";
+		sp_fout << "vegtype fractions:\nX\t AGR\t BLE\t NLE\t BLD\t NLD\t GR\t SCD\t SCX\n";
 		for (int i=0; i<npft; ++i){
 			sp_fout << vegtype.getCellValue(xlon,xlat, i) << '\t'; 
 		}
 		sp_fout << '\n';
 
-		sp_fout << "datetime\t"
-				<< "pheno_phase\t canbio[u]\t litbio[u]\t pheno_phase\t canbio[u]\t litbio[u]\t"
-				<< "ndr\t LAI\t Rn\t pre\t Ep\t Ea\t dzL\t S\t"
+		sp_fout << "date time\t";
+		for (int i=0; i<npft; ++i){
+			sp_fout << "phase(" << pftNames[i] << ")\t"
+					<< "canbio(" << pftNames[i] << ")\t";
+		}
+		sp_fout << "litbio(TOT)\t";
+
+		sp_fout	<< "ndr\t LAI\t Rn\t pre\t Ep\t Ea\t dzL\t S\t"
 				<< "fire\t dfire \n";
 	}
 
+
+//	for (int i=0; i<mgnlons; ++i){
+//		cout << vegtype(i, 20, 0) << " ";
+//	}
+//	cout << endl;
+	
+	
+	write_state(vegtype, "check");
+	write_state(albedo, "check");
 	
 	return 0;
 }

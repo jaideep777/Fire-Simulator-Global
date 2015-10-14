@@ -40,8 +40,10 @@ extern map<string, ip_data> ip_data_map;
 int prerun_canbio_ic(){
 
 	int nyrs = 5;	// number of years of bio pre-run
-	double gt0 = spin_gday_t0 - 365.2524*nyrs + 15.5; // start 2n yrs before lmois spinup
-	int ix_npp_spin0 = nppi.gt2ix(gt0); 
+	double gt0 = spin_gday_t0 - 365.2524*nyrs; // start 2n yrs before lmois spinup
+	if (gt2day(gt0) < 10 || gt2day(gt0) > 20) gt0 += 15.5;	// bring day to centre of month
+	int ix_npp_spin0 = nppi.gt2ix(gt0);
+	//cout << ix_npp_spin0 << " " << gt2string(gt0) << " " << gt2day(gt0) << endl; 
 	
 	int nsteps_npp = nyrs*12;
 	int dstep_npp = nsteps_npp/40+1;
@@ -54,7 +56,7 @@ int prerun_canbio_ic(){
 	lmois.fill(0);
 
 	for (int istep = ix_npp_spin0 ; istep < nsteps_npp + ix_npp_spin0; ++istep){
-		double d = nppi.ix2gt(istep) + 15.5;	// since time unit is months, add 15.5 days to bring each point at the center of month. This prevents month-counting errors because of variation in month size. 
+		double d = nppi.ix2gt(istep);	
 		
 		// update input files
 		update_ip_files(d);
