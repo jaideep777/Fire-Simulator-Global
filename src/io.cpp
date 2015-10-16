@@ -106,7 +106,7 @@ int write_state(gVar &v, string suffix){	// default suffix = ""
 
 	// create a new file_handle so that gVar's original handle is not disturbed
 	NcFile_handle v_handle;
-	v_handle.open(ncoutfile, "w", glimits_india);
+	v_handle.open(ncoutfile, "w", glimits_infisim);
 	
 	// write gVar from created handle
 	v_handle.writeCoords(v);

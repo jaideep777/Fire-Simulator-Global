@@ -545,12 +545,20 @@ int init_all_modelvars(){
 	PREPROC_INIT_MODELVAR(ndr, "W/m2", 1);
 	PREPROC_INIT_MODELVAR(evap, "mm/day", 1);
 	
-	// create daily fire gVar
+	// create daily fire gVar and set its contents to 0
 	int dfnt = mgtimes.size()*dt/24;
 	vector <double> t_temp(dfnt);
-	for (int i=0; i<dfnt; ++i) t_temp[i] = mgtimes[i*24/dt];
+	for (int i=0; i<dfnt; ++i) t_temp[i] = mgtimes[(i+1)*24/dt-1];
 
-	if (varUse_map["dfire"]) init_modelvar("dfire", "-", 1, dfire, t_temp, log_fout);
+	if (varUse_map["dfire"])  init_modelvar("dfire",  "-", 1, dfire,  t_temp, log_fout);
+	if (varUse_map["dts"])    init_modelvar("dts",    "-", 1, dts,    t_temp, log_fout);
+	if (varUse_map["drh"])    init_modelvar("drh",    "-", 1, drh,    t_temp, log_fout);
+	if (varUse_map["dwsp"])   init_modelvar("dwsp",   "-", 1, dwsp,   t_temp, log_fout);
+	if (varUse_map["dlmois"]) init_modelvar("dlmois", "-", 1, dlmois, t_temp, log_fout);
+	if (varUse_map["ddxl"])   init_modelvar("ddxl",   "-", 1, ddxl,   t_temp, log_fout);
+	for (int i=0; i<mgnlons*mgnlats; ++i){
+		dfire[i] = dts[i] = drh[i] = dwsp[i] = dlmois[i] = ddxl[i] = 0;
+	}
 
 };
 

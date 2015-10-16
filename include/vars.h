@@ -47,5 +47,7 @@ extern gVar ndr; 		// net downward radiation
 extern gVar ps;			// surface pressure
 extern gVar evap;			// potential evaporation rate
 
+extern gVar dts, dwsp, drh, dlmois, ddxl;	// daily equivalents of weather variables, to store conditions at max fire
+
 #endif
 

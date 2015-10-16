@@ -36,7 +36,9 @@ int calc_ndr(double gt){
 	for (int ilat=0; ilat<mgnlats; ++ilat){
 		for (int ilon=0; ilon<mgnlons; ++ilon){
 
-			if (pr(ilon,ilat,0) == pr.missing_value){
+			if (msk(ilon,ilat,0) == 0 ||
+				pr(ilon,ilat,0) == pr.missing_value){
+
 				ndr(ilon,ilat,0) = ndr.missing_value;
 			}
 			else
@@ -56,7 +58,7 @@ int calc_ndr(double gt){
 				}
 				else SW_d = 0;
 			
-				float cld = pr(ilon,ilat,0)/3e-4/86400;
+				float cld = pr(ilon,ilat,0)/3e-4;
 				if (cld < 0) cld = 0; if (cld > 1) cld = 1;
 
 				ndr(ilon, ilat, 0) = SW_d*(1-albedo(ilon,ilat,0)/100)*(1-cld*0.6) - 100; // 100 is lw_in - lw_out
@@ -65,7 +67,7 @@ int calc_ndr(double gt){
 		}
 	}
 
-
+	ndr.t = gt;
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -126,7 +128,7 @@ int calc_moisture(){
 					// calculate LAI = canbio/canbiomax * LAImax
 					lai = LAImax[i]*canbio(ilon,ilat,i)/(canbio_max(ilon,ilat,i)+1e-6);	// avoid NaN
 					
-					Wc_sat += Wc_sat_vec[i]*lai*vegtype(ilon,ilat,0);
+					Wc_sat += Wc_sat_vec[i]*lai*vegtype(ilon,ilat,i);
 
 					// R = Watts reaching canopy of i'th PFT, will be intercepted by canopy
 					//   = R(W/m2)* f * acell(m2)

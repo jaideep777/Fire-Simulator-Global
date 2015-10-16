@@ -42,3 +42,7 @@ gVar ndr; 			// net downward radiation
 gVar ps;			// surface pressure
 gVar evap;			// potential evaporation rate
 
+gVar dts, dwsp, drh, dlmois, ddxl;	// daily equivalents of weather variables, to store conditions at max fire
+
+
+

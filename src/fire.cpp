@@ -19,8 +19,15 @@ ofstream fout_fire("../output/fireIndex.txt");
 int calc_fire(double d){ 
 
 	static int prev_day = 0;
-	static int stepnum = -1;
+	static int stepnum = 0;
 	int curr_day = int(d);
+	int last_hr = 24-dt;
+
+	int tarray[6];
+	gt2array(d, tarray);
+
+	int hr = (d - int(d))*24; 
+//	cout <<  "hr = " << hr << " " << tarray[3] << ", last = " << last_hr << '\n';
 
 	for (int ilat=0; ilat<mgnlats; ++ilat){
 		for (int ilon=0; ilon<mgnlons; ++ilon){
@@ -30,12 +37,13 @@ int calc_fire(double d){
 				dxl(ilon,ilat,0) == dxl.missing_value  )
 			{
 				fire(ilon,ilat,0) = fire.missing_value;
+				dfire(ilon,ilat,0) = dfire.missing_value;
 			}
 			else{
-			
+				
 				float T = ts(ilon,ilat,0) - 273.16;	// ts in degC
-//				float RH = rh.values[i]/100;	 	// rh (0,1)
-//				float U = wsp.values[i];			// wsp in m/s
+				float RH = rh(ilon,ilat,0)/100;	 	// rh (0,1)
+				float U = wsp(ilon,ilat,0);			// wsp in m/s
 				float S = lmois(ilon,ilat,0);			// S (0-1)
 				float forest_frac = 1 - vegtype(ilon, ilat, 0) - vegtype(ilon, ilat, 1);	// exclude X and AGR from forest types
 
@@ -47,7 +55,7 @@ int calc_fire(double d){
 				float gT = pow(T/15,3)-pow(T/21,4);  if (gT < 0) gT = 0;		// J2
 //				fire(ilon, ilat, 0) = gT * 25*pow(1-S, 2)*forest_frac/10000;	// J1,J2
 //				fire(ilon, ilat, 0) = gT * 25*pow(1-S, 2)*float(forest_frac>0.3)*dff/10000;	// J3
-				fire(ilon, ilat, 0) = gT * 25*pow(1-S, 1)*pow(F,0.3)*float(forest_frac>0.3)/10000;	// J4
+				float J4 = gT * 25*pow(1-S, 1)*pow(F,0.3)*float(forest_frac>0.3)/10000;	// J4
 
 				// p(ts) etc
 //				float aT = 5, bT  = 30, aRH = 6, bRH = 0.5, aS = 3, bS = 0.3, aU = 1, bU = 1.5;
@@ -57,13 +65,6 @@ int calc_fire(double d){
 //				float pRH = 1/(1+exp(aRH*(RH-bRH)/bRH));
 //				float pS = 1/(1+exp(aS*(S-bS)/bS));
 //				float pF = 1/(1+exp(-aF*(F-bF)/bF));
-
-				// p(fire!)
-//				pfire.values[i] = pT*pU*pRH*pS*pF;		 // stat Full
-//				pfire.values[i] = pT*pow(1-RH,3)*F/100;	 // Karpa
-//				fire(ilon, ilat, 0) = ;	 // Jaideep \m/
-//				float k0 = 1/(5* 20 * (1-0));
-//				pfire.values[i] = U * F * (1-S);		 // Fail!
 
 //				// FFWI Index
 //				float m;
@@ -77,8 +78,28 @@ int calc_fire(double d){
 				// Angstroem index
 //				pfire.values[i] = (RH*100/20 + (27-T)/10)*F/100/50;	
 
-				fout_fire << gt2string(d) << '\t' << T << '\t' << S << '\t' << F << '\t' << forest_frac << '\t' << fire(ilon, ilat, 0) << '\n';
+				fire(ilon, ilat, 0) = J4;
 				
+				if (hr == 0){ 
+						dfire(ilon, ilat, 0)  = fire(ilon, ilat, 0);
+						dts(ilon, ilat, 0)    = ts(ilon, ilat, 0);
+						drh(ilon, ilat, 0)    = rh(ilon, ilat, 0);
+						dwsp(ilon, ilat, 0)   = wsp(ilon, ilat, 0);
+						dlmois(ilon, ilat, 0) = lmois(ilon, ilat, 0);
+						ddxl(ilon, ilat, 0)   = dxl(ilon, ilat, 0);
+				}
+				else {
+					if (fire(ilon, ilat, 0) > dfire(ilon, ilat, 0)){
+						// current fire index is greater, so update weather values to current
+						dfire(ilon, ilat, 0)  = fire(ilon, ilat, 0);
+						dts(ilon, ilat, 0)    = ts(ilon, ilat, 0);
+						drh(ilon, ilat, 0)    = rh(ilon, ilat, 0);
+						dwsp(ilon, ilat, 0)   = wsp(ilon, ilat, 0);
+						dlmois(ilon, ilat, 0) = lmois(ilon, ilat, 0);
+						ddxl(ilon, ilat, 0)   = dxl(ilon, ilat, 0);
+					}
+				}
+
 			}
 
 		}	// ilon loop ends
@@ -86,14 +107,34 @@ int calc_fire(double d){
 	fire.t = ts.t;
 	dfire.t = ts.t;
 
-	int hr = (d - int(d))*24; //cout <<  "hr = " << hr << '\n';
-	if (hr == 6){
-		dfire.values = fire.values;
-//		cout <<  "writing\n";
-		if (stepnum != -1) dfire.ofile_handle->writeVar(dfire, dfire.outNcVar, stepnum);
+	if (hr == 18){
+		dfire.ofile_handle->writeVar(dfire, dfire.outNcVar, stepnum);
+		dts.ofile_handle->writeVar(dts, dts.outNcVar, stepnum);
+		drh.ofile_handle->writeVar(drh, drh.outNcVar, stepnum);
+		dwsp.ofile_handle->writeVar(dwsp, dwsp.outNcVar, stepnum);
+		dlmois.ofile_handle->writeVar(dlmois, dlmois.outNcVar, stepnum);
+		ddxl.ofile_handle->writeVar(ddxl, ddxl.outNcVar, stepnum);
 		++stepnum;
+		
+		for (int ilat=0; ilat<mgnlats; ++ilat){
+			for (int ilon=0; ilon<mgnlons; ++ilon){
+				float forest_frac = 1 - vegtype(ilon, ilat, 0) - vegtype(ilon, ilat, 1);
+				if (forest_frac > 0.3){
+					fout_fire << gt2string(d) << '\t' 
+							  << mglons[ilon] << '\t' << mglats[ilat] << '\t'
+							  << forest_frac << '\t' 
+							  << dts(ilon,ilat,0) << '\t' << drh(ilon,ilat,0) << '\t' << dwsp(ilon,ilat,0) << '\t'
+							  << dlmois(ilon,ilat,0) << '\t' << ddxl(ilon,ilat,0) << '\t' << dfire(ilon, ilat, 0) << '\n';
+				}
+			}
+		}
+	}
+
+	if (spout_on){
+		sp_fout << dlmois(i_xlon, i_xlat, 0) << "\t" << ddxl(i_xlon,i_xlat,0) << '\t' << fire(i_xlon, i_xlat, 0) << "\t" << dfire(i_xlon, i_xlat, 0) << "\t";
 	}
 	
+
 //	if (curr_day != prev_day){
 //		if (stepnum != -1) { // avoid writing at 0th step
 //			dfire.ofile_handle->writeVar(dfire, dfire.outNcVar, stepnum);
@@ -114,10 +155,6 @@ int calc_fire(double d){
 //			}
 //		}
 //	}
-	
-	if (spout_on){
-		sp_fout << fire(i_xlon, i_xlat, 0) << "\t" << dfire(i_xlon, i_xlat, 0) << "\t";
-	}
 	
 }
 

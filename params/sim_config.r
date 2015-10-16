@@ -30,8 +30,8 @@ dlon	0.5
 # 21.5 -18.5  - 90% SCD in Africa
 # 31.0 9.5    - 80% SCD below Sahara
 # 
-xlon	21.5	# 76 31 50
-xlat	-18.5	# 11 35 41
+xlon	22.0	# 76 31 50
+xlat	-2.0	# 11 35 41
 pointOutFile	../output/point_run.txt
 SPout_on	1	# 0/1
 
@@ -52,7 +52,13 @@ canbio_max	0	0
 lmois		1	0
 cmois		1	0
 fire		1	0
+
 dfire		1	0
+dts			1	0
+dwsp		1	0
+drh			1	0
+dlmois		1	0
+ddxl		1	0
 
 # for debugging purposes only.
 # using this makes the code slightly tedious but immensely easy to change quickly
@@ -72,7 +78,13 @@ canbio_max	1
 lmois		1
 cmois		1
 fire		1
+
 dfire		1
+dts			1
+dwsp		1
+drh			1
+dlmois		1
+ddxl		1
 
 > END
 
