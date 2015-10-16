@@ -15,7 +15,7 @@ int calc_ndr(double gt){
 	int m = gt2month(gt);
 	
 	if (m != m_prev){
-		cout << "Reading new albedo from " << albedo.ifname << ": " << gt2string(gt) << " " << m_prev << " " << m << endl;
+		log_fout << "Reading new albedo from " << albedo.ifname << ": " << gt2string(gt) << " " << m_prev << " " << m << endl;
 		albedo.ifile_handle->readVar(albedo,m-1);
 		albedo = lterp(albedo, mglons, mglats);
 		m_prev = m;
@@ -83,7 +83,8 @@ int calc_moisture(){
 	for (int ilat=0; ilat<mgnlats; ++ilat){
 		for (int ilon=0; ilon<mgnlons; ++ilon){
 
-			if( ndr(ilon,ilat,0) == ndr.missing_value 	|| 
+			if( msk(ilon, ilat, 0) == 0 				||
+				ndr(ilon,ilat,0) == ndr.missing_value 	|| 
 				ps(ilon,ilat,0) == ps.missing_value 	|| 
 				rh(ilon,ilat,0) == rh.missing_value 	|| 
 				ts(ilon,ilat,0) == ts.missing_value 	|| 
@@ -104,7 +105,7 @@ int calc_moisture(){
 				float U   = wsp(ilon,ilat,0);			// wsp in m/s
 				float Ps  = ps(ilon,ilat,0)/1000; 		// ps in kPa
 				float dzL = dxl(ilon,ilat,0)/rhobL;		// dzL in mm (dxl is in gm/m2)
-				float pre = pr(ilon,ilat,0);			// pr in mm/day
+				float pre = pr(ilon,ilat,0)*86400;		// pr in mm/day (input data is in kg/m2/s)
 
 				// calculate PFT independent values needed for PER
 				// float es = 0.6108*exp(17.27*T/(T+237.3));	// kPa, T in degC (tetens)

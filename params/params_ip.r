@@ -3,7 +3,7 @@
 
 > INPUT_DATA_TIME_BOUNDS
 ip_start_yr		2000
-ip_end_yr		2013
+ip_end_yr		2012
 
 > FORCING_DATA_DIRS
 
@@ -12,7 +12,7 @@ forcing_data_dir	/media/jaideep/WorkData/Fire_G
 ts		ncep_reanalysis/ts
 rh		ncep_reanalysis/rhum
 wsp		ncep_reanalysis/wsp
-pr		ncep_reanalysis/precip
+pr		ncep_20cen/precip
 npp		GPP_modis
 
 > FORCING_VARIABLE_DATA
@@ -20,7 +20,7 @@ npp		GPP_modis
 ts		K			air.sig995	2000		1			ins			hold
 rh		%			rhum.sig995	2000		1			avg			hold
 wsp		m/s			wsp.sig995	2000		1			ins			hold
-pr		mm/day		pr_wtr.eatm	2000		1			sum			hold	# 0 means missing values were
+pr		mm/day		prate 		2000		1			sum			hold	# 0 means missing values were
 npp		gC/m2/s		npp			2000		14			avg			hold	# set to zero to avoid loss of good data in lterp
 
 # file name will be taken as "prefix.yyyy.nc" or "prefix.yyyy-yyyy.nc"

@@ -192,6 +192,14 @@ int calc_pheno(float gtime, float delT){
 	
 	for (int ilat=0; ilat<mgnlats; ++ilat){
 		for (int ilon=0; ilon<mgnlons; ++ilon){
+			
+			// skip computation for masked regions
+			if (msk(ilon, ilat, 0) == 0 ||
+				npp(ilon, ilat, 0) == npp.missing_value){
+				for (int ilev=0; ilev<npft; ++ilev) canbio(ilon, ilat, ilev) = canbio.missing_value;
+				dxl(ilon, ilat, 0) = dxl.missing_value;
+				continue;
+			}
 
 			float lat = mglats[ilat];
 			float N_obs = npp(ilon, ilat, 0); 

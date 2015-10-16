@@ -118,6 +118,9 @@ int prerun_lmois_ic(){
 		if (istep % dstep_spin == 0) {cout << "."; cout.flush();}
 	}	
 
+	write_state(lmois);
+	write_state(canbio);
+	write_state(dxl);
 	cout << " > 100%\n";
 }
 

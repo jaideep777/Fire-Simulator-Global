@@ -6,10 +6,10 @@
 # time is in GMT
 # spinup MUST BE ENABLED for now
 spinup		on			# (on/off) off implies IC will be supplied from file
-spin_date0	2008-1-1	# time assumed to be 0:0:0. Ideal start date is Apr 1
-sim_date0	2009-1-1
+spin_date0	2005-1-1	# time assumed to be 0:0:0. Ideal start date is Apr 1
+sim_date0	2006-1-1
 sim_t0		0:0:0		# GMT
-sim_datef	2013-12-31
+sim_datef	2012-12-31
 sim_tf		21:0:0
 dt			6			# hours
 base_date	2000-1-1	# base time assumed to be 0:0:0
@@ -17,7 +17,7 @@ base_date	2000-1-1	# base time assumed to be 0:0:0
 
 > MODEL_GRID
 lon0	0.0
-lonf	360.0
+lonf	30.0
 lat0	-30.0
 latf	30.0
 dlat	0.5
@@ -29,8 +29,9 @@ dlon	0.5
 # 76.5 11.5   - Mudumalai (50% BLE + 25% BLD)
 # 21.5 -18.5  - 90% SCD in Africa
 # 31.0 9.5    - 80% SCD below Sahara
-xlon	300.5	# 76 31 50
-xlat	-19.5	# 11 35 41
+# 
+xlon	21.5	# 76 31 50
+xlat	-18.5	# 11 35 41
 pointOutFile	../output/point_run.txt
 SPout_on	1	# 0/1
 
